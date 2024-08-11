@@ -1,0 +1,45 @@
+import re
+
+def check_password_strength(password):
+    # Membuat kriteria kekuatan kata sandi
+    min_length = 12
+    max_length = 20
+
+    # Membuat kriteria kekuatan
+    has_upper = bool(re.search(r'[A-Z]', password))
+    has_lower = bool(re.search(r'[a-z]', password))
+    has_digit = bool(re.search(r'\d', password))
+    has_special = bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+    length_ok = min_length <= len(password) <= max_length
+
+    # Membuat kriteria tambahan
+    consecutive_chars = any(password[i] == password[i+1] for i in range(len(password) - 1))
+    no_common_patterns = not any(pattern in password.lower() for pattern in ['password', '123456', 'qwerty'])
+
+    # Mengevaluasi kekuatan
+    if not length_ok:
+        return "Kata sandi harus antara 12 hingga 20 karakter.", False
+
+    if not (has_upper and has_lower and has_digit and has_special):
+        return "Kata sandi harus mengandung huruf kapital, huruf kecil, angka, dan simbol khusus.", False
+
+    if consecutive_chars:
+        return "Kata sandi tidak boleh memiliki karakter yang berulang secara berurutan.", False
+
+    if not no_common_patterns:
+        return "Kata sandi mengandung pola umum yang lemah.", False
+
+    return "Kata sandi sangat kuat!", True
+
+# Proses input dan validasi
+def prompt_for_password():
+    while True:
+        password = input("Masukkan kata sandi untuk memeriksa kekuatannya: ")
+        result, is_strong = check_password_strength(password)
+        print(result)
+        if is_strong:
+            break
+
+# Penggunaan
+if __name__ == "__main__":
+    prompt_for_password()
